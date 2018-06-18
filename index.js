@@ -46,7 +46,13 @@ console.log('Selected folder: ' + autoPrintFolder + '\n' +
  * File watcher checks provided path foe new files
  * Timer that resets on file changes
  */
-var watcher = chokidar.watch(autoPrintFolder, {ignored: /^\./, persistent: true});
+//var watcher = chokidar.watch(autoPrintFolder, {ignored: /^\./, persistent: true,usePolling: true});
+//'\\\\NEO-TH-AD12\\files\\scanned-files\\auto-print'
+var watcher = chokidar.watch(autoPrintFolder, {
+    ignored: /(^|[\/\\])\../,
+    persistent: true,
+    usePolling: true
+});
 var initialTimer;
 
 /**
@@ -55,7 +61,7 @@ var initialTimer;
  * ensuring that the printing doesn't start premature
  */
 watcher
-    .on('change', function(path) {//wait 10 seconds before attempting to print
+    .on('add', function(path) {//wait 10 seconds before attempting to print
         console.log('File', path, 'has been changed');
         clearTimeout(initialTimer);
         attemptPrint(path);
